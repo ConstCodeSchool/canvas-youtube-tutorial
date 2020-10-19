@@ -1,57 +1,44 @@
 const canvas = document.querySelector("canvas");
 const context = canvas.getContext("2d");
 
-canvas.width = 1600;
-canvas.height = 600;
+canvas.width = 500;
+canvas.height = 500;
 
-// context.font = "75px mono";
-// context.textAlign = "center";
-// context.textBaseline = "middle";
+const CELL_SIZE = 100;
 
-// context.fillStyle = "green";
-// context.fillText("Привет", 300, 300);
+main();
 
-// context.strokeStyle = "red";
-// context.lineWidth = 2;
-// context.strokeText("Привет", 300, 300);
+async function main() {
+	const city = await loadImage("sets/city.jpg");
 
-// drawPoint(300, 300);
+	canvas.width = city.width;
+	canvas.height = city.height;
 
-// // const measure = context.measureText("Привет");
-// // console.log(measure);
+	for (let y = 0; y < city.height / CELL_SIZE; y++) {
+		for (let x = 0; x < city.width / CELL_SIZE; x++) {
+			if ((x + y) % 2 === 0) {
+				continue;
+			}
 
-// function drawPoint(x, y) {
-// 	context.beginPath();
-// 	context.arc(x, y, 5, 0, Math.PI * 2);
-// 	context.fill();
-// }
+			context.drawImage(
+				city,
+				x * CELL_SIZE,
+				y * CELL_SIZE,
+				CELL_SIZE,
+				CELL_SIZE,
+				x * CELL_SIZE,
+				y * CELL_SIZE,
+				CELL_SIZE,
+				CELL_SIZE
+			);
+		}
+	}
+}
 
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
-const variants = [
-	"top",
-	"hanging",
-	"middle",
-	"alphabetic",
-	"ideographic",
-	"bottom",
-];
-
-context.font = "50px mono";
-const middle = canvas.height / 2;
-
-context.beginPath();
-context.moveTo(0, middle);
-context.lineTo(canvas.width, middle);
-context.strokeStyle = "red";
-context.stroke();
-
-let offsetX = 0;
-for (let i = 0; i < variants.length; i++) {
-	const variant = variants[i];
-
-	context.textBaseline = variant;
-	context.fillText(capitalize(variant), offsetX, middle);
-
-	offsetX += context.measureText(capitalize(variant)).width + 50;
+function loadImage(src) {
+	return new Promise((resolve) => {
+		const image = new Image();
+		image.src = src;
+		image.onload = () => resolve(image);
+	});
 }
