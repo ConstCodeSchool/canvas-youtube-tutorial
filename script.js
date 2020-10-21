@@ -4,41 +4,45 @@ const context = canvas.getContext("2d");
 canvas.width = 500;
 canvas.height = 500;
 
-const CELL_SIZE = 100;
+const triangle = {
+	centerX: canvas.width / 2,
+	centerY: canvas.height / 2,
+	radius: 200,
+	angle: 0,
+	angleSpeed: Math.PI * 0.5,
+};
 
-main();
+animation({
+	update({ secondPart }) {
+		triangle.angle += triangle.angleSpeed * secondPart;
+	},
 
-async function main() {
-	const city = await loadImage("sets/city.jpg");
+	clear() {
+		context.beginPath();
+		context.rect(0, 0, canvas.width, canvas.height);
+		context.fillStyle = "gray";
+		context.fill();
+	},
 
-	canvas.width = city.width;
-	canvas.height = city.height;
+	render() {
+		const dAngle = (Math.PI / 3) * 4;
 
-	for (let y = 0; y < city.height / CELL_SIZE; y++) {
-		for (let x = 0; x < city.width / CELL_SIZE; x++) {
-			if ((x + y) % 2 === 0) {
-				continue;
-			}
-
-			context.drawImage(
-				city,
-				x * CELL_SIZE,
-				y * CELL_SIZE,
-				CELL_SIZE,
-				CELL_SIZE,
-				x * CELL_SIZE,
-				y * CELL_SIZE,
-				CELL_SIZE,
-				CELL_SIZE
-			);
-		}
-	}
-}
-
-function loadImage(src) {
-	return new Promise((resolve) => {
-		const image = new Image();
-		image.src = src;
-		image.onload = () => resolve(image);
-	});
-}
+		context.beginPath();
+		context.moveTo(
+			triangle.centerX + triangle.radius * Math.cos(triangle.angle),
+			triangle.centerY + triangle.radius * Math.sin(triangle.angle)
+		);
+		context.lineTo(
+			triangle.centerX + triangle.radius * Math.cos(triangle.angle + dAngle),
+			triangle.centerY + triangle.radius * Math.sin(triangle.angle + dAngle)
+		);
+		context.lineTo(
+			triangle.centerX +
+				triangle.radius * Math.cos(triangle.angle + 2 * dAngle),
+			triangle.centerY + triangle.radius * Math.sin(triangle.angle + 2 * dAngle)
+		);
+		context.closePath();
+		context.fillStyle = "red";
+		context.fill();
+	},
+});
