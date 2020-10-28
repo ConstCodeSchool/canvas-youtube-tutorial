@@ -4,133 +4,40 @@ const context = canvas.getContext("2d");
 canvas.width = 500;
 canvas.height = 500;
 
-let miterLimit = 100;
-const TIME_SCALE = 0.0001;
+main();
 
-animation({
-	clear() {
-		canvas.width |= 0;
-	},
+async function main() {
+	const image = await loadImage(
+		"https://mdn.mozillademos.org/files/222/Canvas_createpattern.png"
+	);
 
-	update({ timestamp }) {
-		miterLimit = 100 - 100 * Math.cos(timestamp * TIME_SCALE);
-	},
+	const patter = context.createPattern(image, "no-repeat");
 
-	render() {
-		context.beginPath();
-		context.moveTo(0, canvas.height / 2);
+	context.fillStyle = patter;
+	context.fillRect(0, 0, 500, 500);
+}
 
-		for (let i = 1; i <= 100; i++) {
-			const y = canvas.height / 2 + 100 * (-1) ** i;
-			context.lineTo(i ** 2, y);
-		}
+function loadImage(src) {
+	return new Promise((resolve) => {
+		const image = new Image();
+		image.src = src;
+		image.onload = () => resolve(image);
+	});
+}
 
-		context.lineWidth = 5;
-		context.miterLimit = miterLimit;
-		context.stroke();
+// const gradient = context.createRadialGradient(300, 200, 50, 250, 250, 200);
+// gradient.addColorStop(0, "red");
+// gradient.addColorStop(0.5, "white");
+// gradient.addColorStop(1, "green");
 
-		context.beginPath();
-		context.moveTo(0, canvas.height / 2 - 75);
-		context.lineTo(canvas.width, canvas.height / 2 - 75);
-		context.strokeStyle = "blue";
-		context.lineWidth = 1;
-		context.stroke();
+// context.fillStyle = gradient;
+// context.fillRect(0, 0, 500, 500);
 
-		context.beginPath();
-		context.moveTo(0, canvas.height / 2 + 75);
-		context.lineTo(canvas.width, canvas.height / 2 + 75);
-		context.strokeStyle = "blue";
-		context.lineWidth = 1;
-		context.stroke();
+// const gradient = context.createLinearGradient(0, 0, 500, 500);
 
-		context.font = "50px serif";
-		context.textBaseline = "top";
-		context.textAlign = "right";
-		context.fillText(String(miterLimit).substring(0, 5), canvas.width, 0);
-	},
-});
+// gradient.addColorStop(0, "red");
+// gradient.addColorStop(0.9, "white");
+// gradient.addColorStop(1, "green");
 
-// const TIME_SCALE = 100;
-// let lineDashOffset = 0;
-
-// const dash = [100, 1100];
-
-// animation({
-// 	clear() {
-// 		canvas.width |= 0;
-// 	},
-
-// 	update({ secondPart }) {
-// 		lineDashOffset += secondPart * TIME_SCALE;
-// 	},
-
-// 	render() {
-// 		context.beginPath();
-// 		context.setLineDash(dash);
-// 		context.lineDashOffset = lineDashOffset;
-// 		context.lineWidth = 5;
-// 		context.rect(100, 100, 300, 300);
-// 		context.stroke();
-// 	},
-// });
-
-// function drawLine(y) {
-// 	context.beginPath();
-// 	context.moveTo(0, y);
-// 	context.lineTo(500, y);
-// 	context.stroke();
-// }
-
-// const TIME_SCALE = 0.001;
-
-// let shadowBlur = 0;
-// let shadowOffsetX = 0;
-// let shadowOffsetY = 0;
-
-// animation({
-// 	clear() {
-// 		canvas.width |= 0;
-// 	},
-
-// 	update({ timestamp }) {
-// 		shadowBlur = 10 + 10 * Math.cos(timestamp * TIME_SCALE);
-// 		shadowOffsetX = 30 * Math.cos(timestamp * TIME_SCALE);
-// 		shadowOffsetY = 30 * Math.sin(timestamp * TIME_SCALE);
-// 	},
-
-// 	render() {
-// 		context.beginPath();
-// 		context.moveTo(100, 100);
-// 		context.lineTo(200, 200);
-// 		context.lineTo(300, 100);
-// 		context.shadowColor = "red";
-// 		context.shadowBlur = shadowBlur;
-// 		context.shadowOffsetX = shadowOffsetX;
-// 		context.shadowOffsetY = shadowOffsetY;
-// 		context.strokeStyle = "blue";
-// 		context.stroke();
-// 	},
-// });
-
-// animation({
-// 	clear() {
-// 		canvas.width |= 0;
-// 	},
-
-// 	update({ timestamp }) {
-// 		shadowBlur = 10 + 10 * Math.cos(timestamp * TIME_SCALE);
-// 		shadowOffsetX = 30 * Math.cos(timestamp * TIME_SCALE);
-// 		shadowOffsetY = 30 * Math.sin(timestamp * TIME_SCALE);
-// 	},
-
-// 	render() {
-// 		context.beginPath();
-// 		context.rect(100, 100, 250, 250);
-// 		context.shadowColor = "red";
-// 		context.shadowBlur = shadowBlur;
-// 		context.shadowOffsetX = shadowOffsetX;
-// 		context.shadowOffsetY = shadowOffsetY;
-// 		context.strokeStyle = "blue";
-// 		context.stroke();
-// 	},
-// });
+// context.fillStyle = gradient;
+// context.fillRect(0, 0, 500, 500);
