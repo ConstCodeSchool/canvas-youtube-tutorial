@@ -4,53 +4,51 @@ const context = canvas.getContext("2d");
 canvas.width = 500;
 canvas.height = 500;
 
-const stars = [];
-for (let x = 0; x < 2; x++) {
-	for (let y = 0; y < 2; y++) {
-		stars.push({
-			centerX: (canvas.width / 4) * (2 * x + 1),
-			centerY: (canvas.height / 4) * (2 * y + 1),
-			n: stars.length + 5,
-			color: ["red", "green", "blue", "black"][stars.length],
-			smallRadius: 25,
-			bigRadius: 50,
-			angle: 0,
-			angleSpeed: Math.PI * (x + y + 1) * 0.35 * (-1) ** y,
-		});
-	}
-}
+const x = canvas.width / 2;
+const y = canvas.height / 2;
+
+const R = 200;
+const r = 100;
+
+let angle = 0;
+const ANGLE_SPEED = Math.PI * 0.1;
+
+let lineDashOffset = 0;
 
 animation({
-	update({ secondPart }) {
-		for (const star of stars) {
-			star.angle += star.angleSpeed * secondPart;
-		}
-	},
-
 	clear() {
 		canvas.width |= 0;
 	},
 
+	update({ timestamp, secondPart }) {
+		angle = Math.PI * 0.25 * Math.cos(timestamp * 0.001);
+		lineDashOffset -= secondPart * 10;
+	},
 	render() {
-		for (const star of stars) {
-			const dAngle = Math.PI / star.n;
+		const dAngle = Math.PI / 5;
 
-			context.beginPath();
-			context.moveTo(
-				star.centerX + star.bigRadius * Math.cos(star.angle),
-				star.centerY + star.bigRadius * Math.sin(star.angle)
+		context.beginPath();
+		context.moveTo(x + R * Math.cos(angle), y + R * Math.sin(angle));
+
+		for (let i = 1; i < 10; i++) {
+			const radius = i % 2 ? r : R;
+			context.lineTo(
+				x + radius * Math.cos(angle + dAngle * i),
+				y + radius * Math.sin(angle + dAngle * i)
 			);
-
-			for (let i = 1; i < star.n * 2; i++) {
-				const r = i % 2 ? star.smallRadius : star.bigRadius;
-
-				context.lineTo(
-					star.centerX + r * Math.cos(star.angle + dAngle * i),
-					star.centerY + r * Math.sin(star.angle + dAngle * i)
-				);
-			}
-			context.fillStyle = star.color;
-			context.fill();
 		}
+
+		context.closePath();
+		context.lineWidth = 3;
+		context.lineDashOffset = lineDashOffset;
+		context.setLineDash([10, 10]);
+		context.stroke();
+
+		context.beginPath();
+		context.arc(x, y, R + 2, 0, Math.PI * 2);
+		context.lineWidth = 2;
+		context.strokeStyle = "blue";
+		context.setLineDash([100, 100]);
+		context.stroke();
 	},
 });
