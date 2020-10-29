@@ -4,40 +4,37 @@ const context = canvas.getContext("2d");
 canvas.width = 500;
 canvas.height = 500;
 
-main();
+const mouse = createMouse(canvas);
 
-async function main() {
-	const image = await loadImage(
-		"https://mdn.mozillademos.org/files/222/Canvas_createpattern.png"
-	);
+const colors = ["red", "blue", "green", "red"];
+let color = "red";
+let r = 5;
 
-	const patter = context.createPattern(image, "no-repeat");
+animation({
+	clear() {
+		// context.beginPath();
+		// context.rect(0, 0, canvas.width, canvas.height);
+		// context.fillStyle = "gray";
+		// context.fill();
+	},
 
-	context.fillStyle = patter;
-	context.fillRect(0, 0, 500, 500);
-}
+	update() {
+		if (mouse.left && !mouse.pLeft) {
+			const index = colors.indexOf(color);
+			color = colors[index + 1];
+		}
 
-function loadImage(src) {
-	return new Promise((resolve) => {
-		const image = new Image();
-		image.src = src;
-		image.onload = () => resolve(image);
-	});
-}
+		if (mouse.middle && !mouse.pMiddle) {
+			r += 3;
+		}
 
-// const gradient = context.createRadialGradient(300, 200, 50, 250, 250, 200);
-// gradient.addColorStop(0, "red");
-// gradient.addColorStop(0.5, "white");
-// gradient.addColorStop(1, "green");
+		mouse.tick();
+	},
 
-// context.fillStyle = gradient;
-// context.fillRect(0, 0, 500, 500);
-
-// const gradient = context.createLinearGradient(0, 0, 500, 500);
-
-// gradient.addColorStop(0, "red");
-// gradient.addColorStop(0.9, "white");
-// gradient.addColorStop(1, "green");
-
-// context.fillStyle = gradient;
-// context.fillRect(0, 0, 500, 500);
+	render() {
+		context.beginPath();
+		context.arc(mouse.x, mouse.y, r, 0, Math.PI * 2);
+		context.fillStyle = color;
+		context.fill();
+	},
+});
